@@ -4,7 +4,12 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-1.30-purple.svg)](https://modelcontextprotocol.io/)
 
-这是一个基于标准 **Model Context Protocol (MCP)** 的本地 stdio 服务端，用于连接 **SAP Cloud Integration (CPI / SAP Integration Suite)**。它允许 AI 编程助手（如 OpenAI Codex、Claude Desktop、Cursor 等）在严格的安全管控下，直接执行 SAP CPI 的设计时管理、包与工件资产盘点、自动化部署、运行时监控以及消息日志故障排查。
+这是一个基于标准 **Model Context Protocol (MCP)** 的本地 stdio 服务端，专为 **SAP Cloud Integration (CPI / SAP Integration Suite)** 量身打造。
+
+它将企业级集成平台的底层能力无缝暴露给现代 AI 编程助手（如 OpenAI Codex、Claude Desktop、Cursor 等），**核心赋能开发者开启 “Vibe Coding” 的极速集成开发新范式**：
+- 💡 **意图即代码（自然语言驱动）**：告别在 SAP Web UI 中频繁的鼠标拖拽、繁琐的点选配置与反复切屏。只需用自然语言描述业务逻辑，AI 即可直接生成/调整 iFlow 编排、数据映射规则与定制 Groovy 脚本。
+- 🔄 **开发/修改/部署/验证一体化（秒级闭环）**：将传统割裂的“本地写脚本 ➔ 手动打包 ➔ 登录网页上传 ➔ 点击部署 ➔ 等待并翻找监控日志”的全流程压缩为一个流畅的对话回路。AI 自动下载最新源码、就地热修、打包上传、触发部署并主动抓取运行时真实 MPL 日志完成自检。
+- 🛡️ **企业级安全护栏（严密管控）**：在赋予极致敏捷的同时坚守安全底线，支持写操作权限隔离（`SAP_ALLOW_WRITE`）、只读安全材料与密钥库元数据（绝不暴露密码与私钥）、防注入结构化参数以及单文件传输安全阀值。
 
 ---
 
@@ -16,17 +21,16 @@
 - [安装与编译](#安装与编译)
 - [配置说明](#配置说明)
 - [在 MCP 客户端中配置](#在-mcp-客户端中配置)
-- [实战操作案例与具体步骤](#实战操作案例与具体步骤)
-  - [案例 1：连通性验证与租户资产盘点](#案例-1连通性验证与租户资产盘点)
-  - [案例 2：从零创建、上传并部署一个最简 iFlow](#案例-2从零创建上传并部署一个最简-iflow)
-  - [案例 3：生产消息故障排查与异常诊断](#案例-3生产消息故障排查与异常诊断)
-  - [案例 4：导出/备份现有 iFlow ZIP 源码](#案例-4导出备份现有-iflow-zip-源码)
-
 - [Vibe Coding：SAP CPI 极速开发与部署验证一体化](#vibe-coding-sap-cpi-极速开发与部署验证一体化)
   - [什么是 SAP CPI 的 Vibe Coding？](#什么是-sap-cpi-的-vibe-coding)
   - [核心工作流：四步闭环（The Vibe Loop）](#核心工作流四步闭环the-vibe-loop)
   - [沉浸式实录：纯自然语言热修与验证](#沉浸式实录纯自然语言热修与验证)
   - [高效 Vibe Coding 技巧](#高效-vibe-coding-技巧)
+- [实战操作案例与具体步骤](#实战操作案例与具体步骤)
+  - [案例 1：连通性验证与租户资产盘点](#案例-1连通性验证与租户资产盘点)
+  - [案例 2：从零创建、上传并部署一个最简 iFlow](#案例-2从零创建上传并部署一个最简-iflow)
+  - [案例 3：生产消息故障排查与异常诊断](#案例-3生产消息故障排查与异常诊断)
+  - [案例 4：导出/备份现有 iFlow ZIP 源码](#案例-4导出备份现有-iflow-zip-源码)
 - [工具完整对照表](#工具完整对照表)
 - [常见问题与排错](#常见问题与排错)
 
