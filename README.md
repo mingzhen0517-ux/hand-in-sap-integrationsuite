@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-1.30-purple.svg)](https://modelcontextprotocol.io/)
 
+[ **中文** | [English](README.en.md) | [日本語](README.ja.md) | [한국어](README.ko.md) ]
+
 这是一个基于标准 **Model Context Protocol (MCP)** 的企业级本地 stdio 服务端，专为 **SAP Cloud Integration (CPI / SAP Integration Suite)** 量身打造。
 
 它将 SAP BTP 云集成平台的底层能力深度暴露给现代 AI 编程助手（如 OpenAI Codex、Claude Desktop、Cursor 等），**以 SAP Clean Core 战略与 SAP Best Practice 为灵魂，核心赋能企业级集成全生命周期的智能化变革与 “Vibe Coding” 极速交付**：
