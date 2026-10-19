@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CpiTestAgentOutput",
+  "type": "object",
+  "required": [
+    "status",
+    "agentId",
+    "taskId",
+    "targetArtifact",
+    "testExecution",
+    "cleanCoreAudit"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["SUCCESS", "FAILED", "BLOCKED"]
+    },
+    "agentId": {
+      "type": "string",
+      "const": "cpi-test-agent"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "targetArtifact": {
+      "type": "object",
+      "required": ["iflowId", "version", "runtimeStatus"],
+      "properties": {
+        "iflowId": { "type": "string" },
+        "version": { "type": "string" },
+        "runtimeStatus": { "type": "string" }
+      }
+    },
+    "testExecution": {
+      "type": "object",
+      "required": ["totalCases", "passedCases", "failedCases"],
+      "properties": {
+        "totalCases": { "type": "integer" },
+        "passedCases": { "type": "integer" },
+        "failedCases": { "type": "integer" },
+        "durationMs": { "type": "number" }
+      }
+    },
+    "mplTrace": {
+      "type": "object",
+      "properties": {
+        "messageGuid": { "type": "string" },
+        "status": { "type": "string" },
+        "correlationId": { "type": "string" },
+        "hasDiagnostics": { "type": "boolean" },
+        "attachmentsCount": { "type": "integer" }
+      }
+    },
+    "cleanCoreAudit": {
+      "type": "object",
+      "required": ["passed", "zeroPiiLeaked", "standardApiVerified"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "zeroPiiLeaked": { "type": "boolean" },
+        "standardApiVerified": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "defectReport": {
+      "type": "object",
+      "properties": {
+        "errorStep": { "type": "string" },
+        "rootCause": { "type": "string" },
+        "rawError": { "type": "string" },
+        "suggestedFix": { "type": "string" }
+      }
+    },
+    "reportFile": {
+      "type": "string"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

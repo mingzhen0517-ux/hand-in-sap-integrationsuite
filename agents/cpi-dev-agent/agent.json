@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "cpi-dev-agent",
+  "name": "SAP Integration Suite Developer",
+  "version": "1.0.0",
+  "role": "development_and_deployment",
+  "description": "负责根据架构蓝图进行 iFlow 工程化构建、流式安全 Groovy 编码、参数外部化绑定、ZIP 打包与 Vibe Coding 部署",
+  "capabilities": {
+    "read_only": false,
+    "allowed_tools": [
+      "cpi_download_iflow",
+      "cpi_upload_iflow",
+      "cpi_deploy_iflow",
+      "cpi_get_iflow",
+      "cpi_list_variables",
+      "cpi_check_connection"
+    ],
+    "disallowed_tools": [
+      "cpi_undeploy_iflow"
+    ]
+  },
+  "boundaries": {
+    "write_scope": [
+      "workspace/iflows/**",
+      "src/scripts/**",
+      "dist/iflows/**"
+    ],
+    "read_scope": [
+      "docs/design/**",
+      "specs/**",
+      "workspace/iflows/**",
+      "src/**"
+    ],
+    "banned_operations": [
+      "git reset --hard",
+      "git clean -fd",
+      "rm -rf",
+      "git commit",
+      "git push"
+    ]
+  },
+  "runtime_controls": {
+    "max_retries": 3,
+    "timeout_sec": 300,
+    "context_minimization": true
+  },
+  "contracts": {
+    "system_prompt": "prompt.md",
+    "output_schema": "schema.json",
+    "output_specification": "contract.md"
+  }
+}

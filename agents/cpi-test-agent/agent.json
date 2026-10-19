@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "cpi-test-agent",
+  "name": "SAP Integration Quality Assurance & Diagnostics",
+  "version": "1.0.0",
+  "role": "testing_and_verification",
+  "description": "负责工件部署就绪状态巡检、端到端集成测试、真实 MPL 消息监控追踪、报错堆栈诊断下钻与 Clean Core 合规验收",
+  "capabilities": {
+    "read_only": true,
+    "allowed_tools": [
+      "cpi_get_runtime_artifact",
+      "cpi_list_runtime_artifacts",
+      "cpi_list_message_logs",
+      "cpi_get_message_log",
+      "cpi_get_message_error",
+      "cpi_get_message_diagnostics",
+      "cpi_list_message_attachments",
+      "cpi_get_message_attachment",
+      "cpi_start_runtime_artifact",
+      "cpi_stop_runtime_artifact",
+      "cpi_undeploy_iflow"
+    ],
+    "disallowed_tools": [
+      "cpi_upload_iflow"
+    ]
+  },
+  "boundaries": {
+    "write_scope": [
+      "test-reports/**",
+      "tests/e2e/**"
+    ],
+    "read_scope": [
+      "**/*"
+    ],
+    "banned_operations": [
+      "git reset --hard",
+      "git clean -fd",
+      "rm -rf",
+      "git commit",
+      "git push"
+    ]
+  },
+  "runtime_controls": {
+    "max_retries": 3,
+    "timeout_sec": 300,
+    "context_minimization": true
+  },
+  "contracts": {
+    "system_prompt": "prompt.md",
+    "output_schema": "schema.json",
+    "output_specification": "contract.md"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "cpi-design-agent",
+  "name": "SAP Clean Core Integration Architect",
+  "version": "1.0.0",
+  "role": "architecture_and_design",
+  "description": "负责 SAP Integration Suite (CPI) 集成方案架构设计、SAP Clean Core 战略评估、标准 API/事件选型与外部化规格制定",
+  "capabilities": {
+    "read_only": true,
+    "allowed_tools": [
+      "cpi_check_connection",
+      "cpi_list_packages",
+      "cpi_get_package",
+      "cpi_list_iflows",
+      "cpi_get_iflow",
+      "cpi_download_iflow",
+      "cpi_list_security_materials",
+      "cpi_list_keystore_entries",
+      "cpi_list_variables"
+    ],
+    "disallowed_tools": [
+      "cpi_upload_iflow",
+      "cpi_deploy_iflow",
+      "cpi_undeploy_iflow",
+      "cpi_start_runtime_artifact",
+      "cpi_stop_runtime_artifact"
+    ]
+  },
+  "boundaries": {
+    "write_scope": [
+      "docs/design/**",
+      "specs/**"
+    ],
+    "read_scope": [
+      "**/*"
+    ],
+    "banned_operations": [
+      "git reset --hard",
+      "git clean -fd",
+      "rm -rf",
+      "git commit",
+      "git push"
+    ]
+  },
+  "runtime_controls": {
+    "max_retries": 3,
+    "timeout_sec": 300,
+    "context_minimization": true
+  },
+  "contracts": {
+    "system_prompt": "prompt.md",
+    "output_schema": "schema.json",
+    "output_specification": "contract.md"
+  }
+}

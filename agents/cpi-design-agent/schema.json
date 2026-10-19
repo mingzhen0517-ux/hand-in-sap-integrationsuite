@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CpiDesignAgentOutput",
+  "type": "object",
+  "required": [
+    "status",
+    "agentId",
+    "taskId",
+    "cleanCoreCompliance",
+    "architectureBlueprint",
+    "nextSuggestedAgent"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["SUCCESS", "FAILED", "BLOCKED"]
+    },
+    "agentId": {
+      "type": "string",
+      "const": "cpi-design-agent"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "cleanCoreCompliance": {
+      "type": "object",
+      "required": ["passed", "releasedApiUsed", "zeroCoreModification", "asynchronousDecoupled"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "releasedApiUsed": { "type": "string" },
+        "zeroCoreModification": { "type": "boolean" },
+        "asynchronousDecoupled": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "architectureBlueprint": {
+      "type": "object",
+      "required": ["packageId", "iflowId", "integrationPattern", "externalizedParameters"],
+      "properties": {
+        "packageId": { "type": "string" },
+        "iflowId": { "type": "string" },
+        "integrationPattern": { "type": "string" },
+        "subProcesses": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "externalizedParameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "category", "defaultValue"],
+            "properties": {
+              "name": { "type": "string" },
+              "category": { "type": "string" },
+              "defaultValue": { "type": "string" },
+              "credentialAlias": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "specificationFile": {
+      "type": "string"
+    },
+    "nextSuggestedAgent": {
+      "type": "string",
+      "const": "cpi-dev-agent"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

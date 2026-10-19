@@ -4,18 +4,41 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-1.30-purple.svg)](https://modelcontextprotocol.io/)
 
-这是一个基于标准 **Model Context Protocol (MCP)** 的本地 stdio 服务端，专为 **SAP Cloud Integration (CPI / SAP Integration Suite)** 量身打造。
+这是一个基于标准 **Model Context Protocol (MCP)** 的企业级本地 stdio 服务端，专为 **SAP Cloud Integration (CPI / SAP Integration Suite)** 量身打造。
 
-它将企业级集成平台的底层能力无缝暴露给现代 AI 编程助手（如 OpenAI Codex、Claude Desktop、Cursor 等），**核心赋能开发者开启 “Vibe Coding” 的极速集成开发新范式**：
-- 💡 **意图即代码（自然语言驱动）**：告别在 SAP Web UI 中频繁的鼠标拖拽、繁琐的点选配置与反复切屏。只需用自然语言描述业务逻辑，AI 即可直接生成/调整 iFlow 编排、数据映射规则与定制 Groovy 脚本。
-- 🔄 **开发/修改/部署/验证一体化（秒级闭环）**：将传统割裂的“本地写脚本 ➔ 手动打包 ➔ 登录网页上传 ➔ 点击部署 ➔ 等待并翻找监控日志”的全流程压缩为一个流畅的对话回路。AI 自动下载最新源码、就地热修、打包上传、触发部署并主动抓取运行时真实 MPL 日志完成自检。
-- 🛡️ **企业级安全护栏（严密管控）**：在赋予极致敏捷的同时坚守安全底线，支持写操作权限隔离（`SAP_ALLOW_WRITE`）、只读安全材料与密钥库元数据（绝不暴露密码与私钥）、防注入结构化参数以及单文件传输安全阀值。
+它将 SAP BTP 云集成平台的底层能力深度暴露给现代 AI 编程助手（如 OpenAI Codex、Claude Desktop、Cursor 等），**以 SAP Clean Core 战略与 SAP Best Practice 为灵魂，核心赋能企业级集成全生命周期的智能化变革与 “Vibe Coding” 极速交付**：
+
+### 🌟 核心价值总览 (Strategic Highlights)
+
+1. 🏛️ **Clean Core 战略实施中枢 (Keep the Core Clean)**：
+   - **核心零侵入**：彻底摒弃在 S/4HANA / ERP 核心中编写定制 Z 程序、直接读写底层物理表或自建脆弱 RFC 点对点接口的传统陋习。将异构系统解耦、多协议转换、报文清洗与集成编排全面沉淀在 SAP Integration Suite。
+   - **标准已发布 API 优先**：严格对接 [SAP Business Accelerator Hub](https://api.sap.com) 官方发布的标准 OData v2/v4、REST、SOAP 接口及企业级事件（SAP Event Mesh），确保核心系统平滑无阻地持续升级。
+
+2. 🏆 **SAP Integration Best Practice 最佳实践沉淀**：
+   - **官方标准内容优先**：优先复用官方预置 Integration Packages（Content Hub），杜绝重复建设。
+   - **配置 100% 外部化**：主机、路径、超时与凭据标识全面外部化（Externalized Parameters），杜绝任何硬编码。
+   - **流式安全 Groovy 编码规范**：严禁大报文全内存加载（防 JVM OOM），强制采用流式处理（Streaming API），内建防御性空值校验与零敏感数据泄漏控制。
+   - **高可用与弹性容错**：标准化落定 Exception Subprocess、基于 ProcessDirect 的微模块化子流程、幂等接收器（Idempotent Receiver）与 JMS 存储转发死信队列。
+
+3. 🤖 **三位一体 Sub-Agent 体系（设计 · 开发 · 测试闭环）**：
+   - 体系化预置 **设计（Design）**、**开发（Dev）**、**测试（Test）** 三个角色各司其职的专职 Sub-Agent，无缝编排 22 个 MCP 原生工具：
+     - **[🏛️ 架构与设计 Sub-Agent (`cpi-design-agent`)](agents/cpi-design-agent.md)**：负责 Clean Core 合规评估、标准 API/事件选型、外部化参数契约与容错集成蓝图规划。
+     - **[🛠️ 开发与构建 Sub-Agent (`cpi-dev-agent`)](agents/cpi-dev-agent.md)**：承接架构设计，负责 iFlow 流程组装、流式安全 Groovy 编码、Base64 ZIP 打包，执行自然语言驱动的 Vibe Coding 秒级热修与部署。
+     - **[🔬 质量与测试 Sub-Agent (`cpi-test-agent`)](agents/cpi-test-agent.md)**：负责工件运行时健康巡检（`STARTED` 状态门禁）、端到端测试、真实 MPL 日志全链路跟踪、报错堆栈精准下钻（ErrorInformation）、Payload 附件校验与 Clean Core 合规审计。
+
+4. 🔄 **开发/修改/部署/验证一体化（秒级闭环 Vibe Coding）**：
+   - 将传统割裂的“本地写脚本 ➔ 手动打包 ➔ 登录网页上传 ➔ 点击部署 ➔ 等待并翻找监控日志”的全流程压缩为一个流畅的对话回路。AI 自动下载最新源码、就地热修、打包上传、触发部署并主动抓取运行时真实 MPL 日志完成自检。
+
+5. 🛡️ **企业级安全护栏（严密管控）**：
+   - 支持写操作权限强隔离（`SAP_ALLOW_WRITE`）、只读安全材料与密钥库元数据（绝不暴露密码与私钥）、防注入结构化参数校验以及单文件传输安全内存阀值。
 
 ---
 
 ## 目录
 
 - [核心功能一览](#核心功能一览)
+- [SAP Clean Core 战略与最佳实践原则](#sap-clean-core-战略与最佳实践原则)
+- [三位一体 Sub-Agent 体系 (设计 · 开发 · 测试)](#三位一体-sub-agent-体系-设计--开发--测试)
 - [安全架构与安全设计](#安全架构与安全设计)
 - [环境准备](#环境准备)
 - [安装与编译](#安装与编译)
@@ -58,6 +81,132 @@
 - **消息处理日志多维检索**：支持按时间区间、状态（`FAILED` / `COMPLETED`）、iFlow 标识、`MessageGuid`、`CorrelationId` 检索（`cpi_list_message_logs`, `cpi_get_message_log`）。
 - **错误堆栈下钻**：直接提取报错消息的保留错误详情（`cpi_get_message_error`）。
 - **附件与诊断画像**：获取消息附带的 payload 附件元数据及内容（`cpi_list_message_attachments`, `cpi_get_message_attachment`），或一键汇聚自定义标头、适配器属性、运行步骤与子流程（`cpi_get_message_diagnostics`）。
+
+---
+
+---
+
+## SAP Clean Core 战略与最佳实践原则
+
+在现代 SAP 企业级架构中，**Clean Core** 是保障 S/4HANA 与 ERP 系统快速创新、低成本升级与高敏捷演进的核心战略。本项目作为连接 AI 与 SAP Integration Suite 的桥梁，严格贯彻以下准则：
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        SAP Clean Core 架构全景                         │
+├────────────────────────────────────────────────────────────────────────┤
+│  [外部异构应用 / SaaS] ──(REST / OData / Events)──┐                   │
+│                                                   ▼                    │
+│                 ┌─────────────────────────────────────────┐            │
+│                 │      SAP Integration Suite (CPI)        │            │
+│                 │ ─────────────────────────────────────── │            │
+│                 │ • 协议转换 / 报文映射 / 业务规则路由    │            │
+│                 │ • 统一凭证与安全材料隔离 (Security Mat) │            │
+│                 │ • 异步队列缓冲与幂等性保障 (JMS / EDA)   │            │
+│                 │ • 流式处理 (Streaming Groovy & XSLT)    │            │
+│                 └────────────────────┬────────────────────┘            │
+│                                      │                                 │
+│                   标准发布 API (OData v2/v4, Events)                   │
+│                                      ▼                                 │
+│                 ┌─────────────────────────────────────────┐            │
+│                 │           SAP S/4HANA (Clean Core)      │            │
+│                 │ ─────────────────────────────────────── │            │
+│                 │ 核心业务事务逻辑 / 标准业务对象接口     │            │
+│                 │ [零直接物理表修改 | 零定制 RFC 暴露]    │            │
+│                 └─────────────────────────────────────────┘            │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **核心零侵入 (Zero Core Modification)**：
+   所有系统间差异抹平、字段映射、校验路由、加密签名和错误重试全部在 Integration Suite 完成，保护核心系统免受异构集成冲击。
+2. **标准接口优先 (Released APIs First)**：
+   遵循 SAP 官方发布的公共接口规范，杜绝未经治理的底层直连，确保系统不受 SAP 升级版本影响。
+3. **参数 100% 外部化 (Externalization)**：
+   所有通信端点、凭证别名、超时阈值等环境属性全部通过外部化参数管理，保障开发、测试与生产环境无缝移植。
+4. **流式安全与内存防护 (Safe Groovy & Streaming)**：
+   严格落实流式读写，避免一次性加载大报文引发的 JVM 堆内存溢出（OOM），敏感凭据与隐私数据在日志中强制脱敏。
+
+---
+
+## 三位一体 Sub-Agent 体系 (设计 · 开发 · 测试)
+
+为了让 AI 代理不仅具备单点执行能力，更具备企业级集成全生命周期的工程化协作能力，本项目内建了标准化的 **三位一体 Sub-Agent 体系**（详见 [`agents/`](agents/) 目录及 [`AGENTS.md`](AGENTS.md)）：
+
+```
+               ┌─────────────────────────────────────────────────────────┐
+               │                  业务集成目标与意图描述                 │
+               └────────────────────────────┬────────────────────────────┘
+                                            │
+                                            ▼
+               ┌─────────────────────────────────────────────────────────┐
+               │ 🏛️ cpi-design-agent (架构与设计 Sub-Agent)              │
+               │ • Clean Core 合规评估与标准 API 选型 (API Hub)          │
+               │ • 集成包资产复用评估与 iFlow 架构蓝图规划               │
+               │ • 外部化参数清单、容错与安全凭据设计                    │
+               │ ➔ 交付物: 《SAP 接口集成架构设计说明书》                │
+               └────────────────────────────┬────────────────────────────┘
+                                            │ 架构交接
+                                            ▼
+               ┌─────────────────────────────────────────────────────────┐
+               │ 🛠️ cpi-dev-agent (开发与构建 Sub-Agent)                 │
+               │ • 组装 iFlow、外部化参数绑定与 Exception Subprocess 落地 │
+               │ • 编写流式安全 Groovy 脚本 (防 OOM, 防空指针)           │
+               │ • Base64 打包 ➔ cpi_upload_iflow ➔ cpi_deploy_iflow     │
+               │ ➔ 交付物: 已部署运行时工件与接口契约                    │
+               └────────────────────────────┬────────────────────────────┘
+                                            │ 部署交付
+                                            ▼
+               ┌─────────────────────────────────────────────────────────┐
+               │ 🔬 cpi-test-agent (质量与测试 Sub-Agent)                │
+               │ • 运行时就绪巡检: cpi_get_runtime_artifact (STARTED 门禁│
+               │ • MPL 实时追踪: cpi_list_message_logs, 诊断下钻分析     │
+               │ • 异常提取: cpi_get_message_error, 报文附件校验         │
+               │ • 破坏性/边界用例测试与 Clean Core 合规审计             │
+               │ ➔ 交付物: 《集成工件质检验收认证报告》 / 缺陷返工单    │
+               └────────────────────────────┬────────────────────────────┘
+                                            │
+                   ┌────────────────────────┴────────────────────────┐
+                   ▼                                                 ▼
+            [测试未通过 / 异常]                              [全项通过 / 验收达标]
+       反哺 cpi-dev-agent 极速热修                          归档上线 / 交付生产
+```
+
+### 1. [🏛️ CPI Design Agent（架构与设计）](agents/cpi-design-agent/prompt.md)
+- **配置与规约**：[`agent.json`](agents/cpi-design-agent/agent.json) · [`prompt.md`](agents/cpi-design-agent/prompt.md) · [`contract.md`](agents/cpi-design-agent/contract.md) · [`schema.json`](agents/cpi-design-agent/schema.json)
+- **辅助核查脚本**：[`check-clean-core.mjs`](agents/cpi-design-agent/scripts/check-clean-core.mjs) (静态校验 Clean Core 合规、API 选型与外部化参数)
+- **核心定位**：SAP 集成架构师与 Clean Core 治理顾问。
+- **写作用域与权限**：只读模式，仅限在 `docs/design/**` 与 `specs/**` 生成规范文档；严禁调用写入或修改工具。
+- **关键任务**：开展 Clean Core 准入评估，在 SAP Business Accelerator Hub 选型官方标准已发布 API；审查租户集成包（`cpi_list_packages`）；设计 BPMN2 拓扑、ProcessDirect 微模块复用、外部化参数与可靠容错蓝图。
+
+### 2. [🛠️ CPI Dev Agent（开发与构建）](agents/cpi-dev-agent/prompt.md)
+- **配置与规约**：[`agent.json`](agents/cpi-dev-agent/agent.json) · [`prompt.md`](agents/cpi-dev-agent/prompt.md) · [`contract.md`](agents/cpi-dev-agent/contract.md) · [`schema.json`](agents/cpi-dev-agent/schema.json)
+- **辅助工程脚本**：[`check-groovy-stream.mjs`](agents/cpi-dev-agent/scripts/check-groovy-stream.mjs) (流式防 OOM 扫描) · [`pack-iflow.mjs`](agents/cpi-dev-agent/scripts/pack-iflow.mjs) (目录校验与 Base64 ZIP 打包)
+- **核心定位**：资深 CPI 实施工程师与 Vibe Coding 实施专家。
+- **写作用域与权限**：严格限定在 `workspace/iflows/**` 及 `src/scripts/**`（互斥写入隔离）；严禁越权修改设计书或全局配置。
+- **关键任务**：根据设计蓝图快速拉取基线（`cpi_download_iflow`）；进行 BPMN2 编排与参数外部化；编写流式安全 Groovy 脚本（防 JVM OOM）；打包并调用 `cpi_upload_iflow` 与 `cpi_deploy_iflow` 触发部署。
+
+### 3. [🔬 CPI Test Agent（质量与测试）](agents/cpi-test-agent/prompt.md)
+- **配置与规约**：[`agent.json`](agents/cpi-test-agent/agent.json) · [`prompt.md`](agents/cpi-test-agent/prompt.md) · [`contract.md`](agents/cpi-test-agent/contract.md) · [`schema.json`](agents/cpi-test-agent/schema.json)
+- **辅助诊断脚本**：[`format-mpl-report.mjs`](agents/cpi-test-agent/scripts/format-mpl-report.mjs) (MPL 原始日志清洗与测试报告规整)
+- **核心定位**：集成 QA 工程师与运行时全链路诊断专家。
+- **写作用域与权限**：仅限在 `test-reports/**` 记录报告；只读监控与运行时诊断权限；严禁修改任何业务代码与 Groovy 脚本。
+- **关键任务**：轮询确认工件处于 `STARTED` 态（`cpi_get_runtime_artifact`）；发起端到端测试并抓取真实 MPL 消息日志（`cpi_list_message_logs`）；若失败下钻提取错误堆栈（`cpi_get_message_error`）与步骤明细（`cpi_get_message_diagnostics`）；输出结构化缺陷单或验收报告。
+
+---
+
+### 🛡️ Sub-Agent 五大协作准则 (Orchestration Mandates)
+
+各 Sub-Agent 严格遵循 [`agents/shared/orchestrator-protocol.md`](agents/shared/orchestrator-protocol.md) 协议：
+1. **严格边界与防踏空 (Scope & Boundaries)**：
+   - 白名单写入约束，严禁越界修改未授权目录。
+   - 严禁执行 `git reset --hard`、`git clean -fd`、`rm -rf` 等破坏性指令，严禁未经授权的 git commit。
+2. **上下文继承与精简 (Context Minimization)**：
+   - 拒绝向子代理倾倒全量历史会话。只传递当前任务目标（Objective）、入参文件列表与明确约束，杜绝幻觉与成本消耗。
+3. **确定性输出契约 (Output Contract)**：
+   - 子代理回复**严禁寒暄与废话**，直接输出标准化报告，并在结尾附带符合自身 `schema.json` 的 JSON 代码块，实现主代理零误差解析。
+4. **停止条件与超时熔断 (Exit Condition & Circuit Breaker)**：
+   - 明确“完成判定条件”；设定**最多重试 3 次**的熔断门槛。若连续 3 次失败立即放弃打补丁，标记为 `BLOCKED` 并返回排错详情，防止死循环。
+5. **并行与写冲突隔离 (Disjoint Write Sets)**：
+   - 多子代理并行作业时，各 Agent 文件写入集合互斥（Disjoint）。所有集成合并工作由主代理统一拉通。
 
 ---
 

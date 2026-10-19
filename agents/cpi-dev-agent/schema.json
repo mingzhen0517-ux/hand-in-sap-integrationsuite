@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CpiDevAgentOutput",
+  "type": "object",
+  "required": [
+    "status",
+    "agentId",
+    "taskId",
+    "deployedArtifact",
+    "modifiedFiles",
+    "groovyCompliance",
+    "deploymentResult",
+    "nextSuggestedAgent"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["SUCCESS", "FAILED", "BLOCKED"]
+    },
+    "agentId": {
+      "type": "string",
+      "const": "cpi-dev-agent"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "deployedArtifact": {
+      "type": "object",
+      "required": ["packageId", "iflowId", "version"],
+      "properties": {
+        "packageId": { "type": "string" },
+        "iflowId": { "type": "string" },
+        "version": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "modifiedFiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "groovyCompliance": {
+      "type": "object",
+      "required": ["memoryStreamingSafe", "zeroHardcodedSecrets", "nullSafeChecked"],
+      "properties": {
+        "memoryStreamingSafe": { "type": "boolean" },
+        "zeroHardcodedSecrets": { "type": "boolean" },
+        "nullSafeChecked": { "type": "boolean" },
+        "scannedScriptCount": { "type": "integer" }
+      }
+    },
+    "deploymentResult": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string" },
+        "uploadTimestamp": { "type": "string" },
+        "deployTimestamp": { "type": "string" }
+      }
+    },
+    "retryCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "nextSuggestedAgent": {
+      "type": "string",
+      "const": "cpi-test-agent"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
