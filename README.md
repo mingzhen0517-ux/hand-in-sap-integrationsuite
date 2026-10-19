@@ -21,6 +21,12 @@
   - [案例 2：从零创建、上传并部署一个最简 iFlow](#案例-2从零创建上传并部署一个最简-iflow)
   - [案例 3：生产消息故障排查与异常诊断](#案例-3生产消息故障排查与异常诊断)
   - [案例 4：导出/备份现有 iFlow ZIP 源码](#案例-4导出备份现有-iflow-zip-源码)
+
+- [Vibe Coding：SAP CPI 极速开发与部署验证一体化](#vibe-coding-sap-cpi-极速开发与部署验证一体化)
+  - [什么是 SAP CPI 的 Vibe Coding？](#什么是-sap-cpi-的-vibe-coding)
+  - [核心工作流：四步闭环（The Vibe Loop）](#核心工作流四步闭环the-vibe-loop)
+  - [沉浸式实录：纯自然语言热修与验证](#沉浸式实录纯自然语言热修与验证)
+  - [高效 Vibe Coding 技巧](#高效-vibe-coding-技巧)
 - [工具完整对照表](#工具完整对照表)
 - [常见问题与排错](#常见问题与排错)
 
@@ -163,6 +169,107 @@ cwd = "/绝对路径/hand-in-sap-integrationsuite"
   }
 }
 ```
+
+---
+
+## Vibe Coding：SAP CPI 极速开发与部署验证一体化
+
+### 什么是 SAP CPI 的 Vibe Coding？
+
+在传统的 SAP Cloud Integration 开发中，开发者通常要在 SAP Web UI 中进行大量机械操作：
+> *登录 BTP 控制台 ➔ 打开 Design 标签 ➔ 鼠标拖拽 BPMN 元素 ➔ 逐个配置 Adapter 属性 ➔ 在内嵌网页编辑器调试 Groovy 脚本 ➔ 点击 Save & Deploy ➔ 切换到 Operations 监控页面 ➔ 疯狂按刷新等待 MPL 日志 ➔ 发现报错再切回 Design 修改……*
+
+**现在，借助本 MCP 服务与现代 AI 编程助手（如 OpenAI Codex、Claude Desktop），你可以开启全新的 “Vibe Coding” 体验：**
+
+**“全程不用打开浏览器，不用手动点击任何界面。用自然语言表达业务想法，AI 负责在毫秒间完成代码编写、流程配置、自动打包、推送租户、触发部署并在 10 秒内抓取运行时真实日志完成闭环自验。”**
+
+---
+
+### 核心工作流：四步闭环（The Vibe Loop）
+
+```text
+  ┌──────────────────────────────────────────────────────────────┐
+  │                 1. 意图驱动 (Vibe & Prompt)                   │
+  │    自然语言描述集成需求 / 字段转换规则 / 异常拦截策略       │
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │
+                                 ▼
+  ┌──────────────────────────────────────────────────────────────┐
+  │             2. 本地快速修改 (In-Place Fast Patch)             │
+  │  cpi_download_iflow 拉取最新源码 ➔ AI 智能编写 Groovy/BPMN   │
+  │         自动编译打包为标准 ZIP ➔ cpi_upload_iflow 上传       │
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │
+                                 ▼
+  ┌──────────────────────────────────────────────────────────────┐
+  │                 3. 瞬时部署 (Instant Deploy)                  │
+  │      cpi_deploy_iflow 触发部署 ➔ 自动轮询运行时状态           │
+  │         cpi_get_runtime_artifact 确认状态变为 STARTED         │
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │
+                                 ▼
+  ┌──────────────────────────────────────────────────────────────┐
+  │         4. 自动化自省验证与回环修复 (Self-Verify & Heal)      │
+  │   模拟发送测试请求 ➔ cpi_list_message_logs 提取真实日志       │
+  │  若有报错自动分析堆栈 (cpi_get_message_error) 并自动修正重调  │
+  └──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 沉浸式实录：纯自然语言热修与验证
+
+以下是一次典型的真实交互过程，整个过程无需离开当前终端：
+
+#### 场景：给现有 iFlow 增加一个参数清洗与签名注入逻辑
+
+> **开发者：**
+> *“我们之前的 `SimpleTestIflow` 需要改造一下：帮我加一段 Groovy 脚本，把请求 Body 里的手机号中间 4 位做脱敏（脱敏为 138****1234），并在 Header 里加上 `X-Processed-By: Codex-AI`，改好后直接部署上去，并验证部署状态。”*
+
+> **AI 助手（全自动在背后协同执行）：**
+> 1. 调用 `cpi_download_iflow` 获取当前 `SimpleTestIflow` 源码。
+> 2. 在本地解压，生成 Groovy 脚本文件 `src/main/resources/script/maskData.groovy`：
+>    ```groovy
+>    import com.sap.gateway.ip.core.customdev.util.Message
+>    import groovy.json.JsonSlurper
+>    import groovy.json.JsonOutput
+>
+>    def Message processData(Message message) {
+>        def body = message.getBody(String)
+>        def json = new JsonSlurper().parseText(body)
+>        if (json.phone && json.phone.length() == 11) {
+>            json.phone = json.phone.substring(0, 3) + "****" + json.phone.substring(7)
+>        }
+>        message.setBody(JsonOutput.toJson(json))
+>        message.setHeader("X-Processed-By", "Codex-AI")
+>        return message
+>    }
+>    ```
+> 3. 更新 BPMN `.iflw` 流程，编排该 Script 节点并串接 Sequence Flow。
+> 4. 自动压缩为 ZIP，调用 `cpi_upload_iflow(mode: "update", id: "SimpleTestIflow", ...)`。
+> 5. 立即调用 `cpi_deploy_iflow` 部署新版本。
+> 6. 轮询 `cpi_get_runtime_artifact`，在 8 秒后检测到状态成功变为 `STARTED` 并向开发者汇报：
+>    > *“改造完成！脱敏 Groovy 脚本已编排入流程，新版本 1.0.1 已部署生效，运行时状态为 STARTED。”*
+
+> **开发者：**
+> *“帮我发一条测试消息，查一下 CPI 的 MPL 日志看处理是否成功。”*
+
+> **AI 助手：**
+> 1. 通过 curl 或端点发送包含 `{"phone":"13812345678"}` 的 HTTP 测试负载。
+> 2. 调用 `cpi_list_message_logs({ integrationFlowName: "SimpleTestIflow", limit: 1 })`。
+> 3. 获取到日志状态为 `COMPLETED`，调用 `cpi_get_message_diagnostics` 查看自定义 Header 已经带有 `X-Processed-By: Codex-AI`，耗时 42ms。
+> 4. 直接输出验证结果，完整闭环达成！
+
+---
+
+### 高效 Vibe Coding 技巧
+
+1. **测试驱动的持续闭环 (Test-Driven CPI)**：
+   不要等到集成全配好再去排查。每次让 AI 增加一个小逻辑，就让它顺带调用 `cpi_deploy_iflow` 并检查 `cpi_list_message_logs`。
+2. **结合本地 Git 追踪设计时演进**：
+   在 AI 每次下载或修改 iFlow 前后，可以在本地工作区提交 Git commit，轻松实现 CPI 集成流的本地版本对比（Diff）与撤销回滚。
+3. **遇到报错让 AI 自动“自愈”**：
+   如果部署后消息处理失败（状态为 `FAILED`），直接对 AI 说：*“看一下刚才那条失败消息的 error log，定位原因并帮我修好它重新部署”*。AI 会自动调取 `cpi_get_message_error` 读取 SAP 真实报错并就地重试！
 
 ---
 
